@@ -346,6 +346,17 @@ window.onload = () => {
     editorElement.onchange = setEditorRowsOnChange;
     editorElement.onkeyup = setEditorRowsOnChange;
     justifyButton.onclick = onJustifyContent;
+    document.addEventListener("keydown", (event) => {
+      if (
+        event.ctrlKey &&
+        event.altKey &&
+        event.metaKey &&
+        event.code === "KeyJ"
+      ) {
+        event.preventDefault();
+        onJustifyContent();
+      }
+    });
   }
 
   // ─── Main ──────────────────────────────────────────────────────────────── ✦ ─
