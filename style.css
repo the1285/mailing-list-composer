@@ -1,0 +1,93 @@
+html,
+body {
+  margin: 0;
+}
+
+/* ─── Html And Body ──────────────────────────────────────────────────── ✦ ─ */
+
+html {
+  font-family: "Lotion" !important;
+  padding: 0;
+  font-size: 0.5cm;
+}
+
+body {
+  padding: 2rem;
+  background-color: #dbe1ff;
+}
+
+/* ─── Whole Content Container ────────────────────────────────────────── ✦ ─ */
+
+#whole-content-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: fit-content;
+  margin: auto;
+}
+
+/* ─── Justification Button ───────────────────────────────────────────── ✦ ─ */
+
+#justify-button {
+  width: 17rem;
+  height: auto;
+  align-self: flex-end;
+}
+
+#justify-button-arrow-shape {
+  fill: black;
+}
+
+#justify-button-arrow-shape:hover {
+  fill: url(#rainbow);
+  animation: hue-rotate-loop 0.75s linear infinite;
+}
+
+#justify-button-arrow-shape:active {
+  opacity: 50%;
+}
+
+#justify-button-arrow-shape-stroke {
+  fill: black;
+}
+
+#justify-button-arrow-shape:hover #justify-button-arrow-shape-stroke {
+  fill: rgba(255, 255, 255, 0.2);
+}
+
+#justify-button-label {
+  pointer-events: none;
+  fill: white;
+}
+
+@keyframes hue-rotate-loop {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(-360deg);
+  }
+}
+
+/* ─── Editor ─────────────────────────────────────────────────────────── ✦ ─ */
+
+#editor-container {
+  background-color: #ffbce2;
+  padding: 2rem;
+  max-width: fit-content;
+  margin: auto;
+  border: 2pt solid black;
+}
+
+#editor {
+  background-color: transparent;
+  border: transparent;
+  outline: none !important;
+  font-size: 1rem;
+  font-family: "Lotion" !important;
+
+  color: black;
+  line-height: 1.6;
+  overflow-y: hidden;
+  resize: none;
+}
