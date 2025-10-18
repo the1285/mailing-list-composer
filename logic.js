@@ -281,7 +281,13 @@ window.onload = () => {
   const newLineRegExp = /\n/g;
   const editorElement = document.getElementById("editor");
   const justifyButton = document.getElementById("justify-button");
-  const justifier = new MonoJustifier({ maxLineSize: 50 });
+  const normalLineJustification = 50;
+  const normalJustifier = new MonoJustifier({
+    maxLineSize: normalLineJustification,
+  });
+  const quoteJustifier = new MonoJustifier({
+    maxLineSize: normalLineJustification - 2,
+  });
   const contentKey = "org.1285.mailing.composer.content";
 
   // ─── Set Rows To Be The Same As Lines ──────────────────────────────────── ✦ ─
@@ -294,10 +300,37 @@ window.onload = () => {
     localStorage.setItem(contentKey, content);
   }
 
+  // ─── Justify Content ─────────────────────────────────────────────────
+
+  function justifyContent(content) {
+    const portions = content.split(/\s*\n\n+\s*/g);
+    const results = [];
+
+    const handleDecorativeContent = (decoration, portion) => {
+      const content = portion.substring(2).split("\n");
+      const lines = quoteJustifier.justifyLines(content);
+      const justifiedPortion = lines
+        .map((line, index) => `${index === 0 ? decoration : " "} ${line}`)
+        .join("\n");
+      results.push(justifiedPortion);
+    };
+
+    for (const portion of portions) {
+      if (portion.startsWith("> ")) {
+        handleDecorativeContent(">");
+      } else if (portion.startsWith("- ")) {
+        handleDecorativeContent("-");
+      } else {
+        results.push(normalJustifier.justifyText(portion));
+      }
+    }
+    return results.join("\n\n");
+  }
+
   // ─── On Justify ──────────────────────────────────────────────────────
 
   function onJustifyContent() {
-    editorElement.value = justifier.justifyText(editorElement.value);
+    editorElement.value = justifyContent(editorElement.value);
     setEditorRowsOnChange();
   }
 
