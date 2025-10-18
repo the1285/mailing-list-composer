@@ -282,12 +282,16 @@ window.onload = () => {
   const editorElement = document.getElementById("editor");
   const justifyButton = document.getElementById("justify-button");
   const justifier = new MonoJustifier({ maxLineSize: 50 });
+  const contentKey = "org.1285.mailing.composer.content";
 
   // ─── Set Rows To Be The Same As Lines ──────────────────────────────────── ✦ ─
 
   function setEditorRowsOnChange() {
-    const lines = (editorElement.value.match(newLineRegExp) || []).length;
+    const content = editorElement.value;
+    const lines = (content.match(newLineRegExp) || []).length;
     editorElement.setAttribute("rows", Math.max(20, lines + 2));
+
+    localStorage.setItem(contentKey, content);
   }
 
   // ─── On Justify ──────────────────────────────────────────────────────
@@ -307,6 +311,6 @@ window.onload = () => {
 
   // ─── Main ──────────────────────────────────────────────────────────────── ✦ ─
 
+  editorElement.value = localStorage.getItem(contentKey);
   setupWindowEvents();
-  console.log("here");
 };
