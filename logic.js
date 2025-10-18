@@ -231,11 +231,13 @@ window.onload = () => {
       if (buffer.length > 0) {
         lines.push(buffer);
       }
-      let lastLine = lines[lines.length - 1];
-      if (lastLine.length == 1 && lines.length > 1) {
-        const lineToTheEnd = lines[lines.length - 2];
-        if (lineToTheEnd.length > 1) {
-          lines[lines.length - 1] = [lineToTheEnd.pop(), ...lastLine];
+      if (lines.length > 0) {
+        const lastLine = lines[lines.length - 1];
+        if (lastLine.length == 1 && lines.length > 1) {
+          const lineToTheEnd = lines[lines.length - 2];
+          if (lineToTheEnd.length > 1) {
+            lines[lines.length - 1] = [lineToTheEnd.pop(), ...lastLine];
+          }
         }
       }
       return lines;
@@ -279,9 +281,10 @@ window.onload = () => {
   // ─── Window Logic ──────────────────────────────────────────────────────── ✦ ─
 
   const newLineRegExp = /\n/g;
+  const lineSeparatorRegExp = /^\-{3}\-*$/;
   const editorElement = document.getElementById("editor");
   const justifyButton = document.getElementById("justify-button");
-  const normalLineJustification = 50;
+  const normalLineJustification = 60;
   const normalJustifier = new MonoJustifier({
     maxLineSize: normalLineJustification,
   });
@@ -303,7 +306,7 @@ window.onload = () => {
   // ─── Justify Content ─────────────────────────────────────────────────
 
   function justifyContent(content) {
-    const portions = content.split(/\s*\n\n+\s*/g);
+    const portions = content.split(/\s*\n{2}\s*/g);
     const results = [];
 
     const handleDecorativeContent = (decoration, portion) => {
@@ -317,13 +320,16 @@ window.onload = () => {
 
     for (const portion of portions) {
       if (portion.startsWith("> ")) {
-        handleDecorativeContent(">");
+        handleDecorativeContent(">", portion);
       } else if (portion.startsWith("- ")) {
-        handleDecorativeContent("-");
+        handleDecorativeContent("-", portion);
+      } else if (lineSeparatorRegExp.test(portion.trim())) {
+        results.push("-".repeat(normalLineJustification));
       } else {
         results.push(normalJustifier.justifyText(portion));
       }
     }
+
     return results.join("\n\n");
   }
 
@@ -346,4 +352,5 @@ window.onload = () => {
 
   editorElement.value = localStorage.getItem(contentKey);
   setupWindowEvents();
+  setEditorRowsOnChange();
 };
