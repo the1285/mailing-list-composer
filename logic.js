@@ -282,13 +282,14 @@ window.onload = () => {
 
   const newLineRegExp = /\n/g;
   const lineSeparatorRegExp = /^\-{3}\-*$/;
+  const quoteDetectionRegExp = /^\s*\>/;
   const editorElement = document.getElementById("editor");
   const justifyButton = document.getElementById("justify-button");
   const normalLineJustification = 60;
   const normalJustifier = new MonoJustifier({
     maxLineSize: normalLineJustification,
   });
-  const quoteJustifier = new MonoJustifier({
+  const indentedJustifier = new MonoJustifier({
     maxLineSize: normalLineJustification - 2,
   });
   const contentKey = "org.1285.mailing.composer.content";
@@ -309,20 +310,31 @@ window.onload = () => {
     const portions = content.split(/\s*\n{2}\s*/g);
     const results = [];
 
-    const handleDecorativeContent = (decoration, portion) => {
+    const handleListParagraph = (portion) => {
       const content = portion.substring(2).split("\n");
-      const lines = quoteJustifier.justifyLines(content);
+      const lines = indentedJustifier.justifyLines(content);
       const justifiedPortion = lines
-        .map((line, index) => `${index === 0 ? decoration : " "} ${line}`)
+        .map((line, index) => `${index === 0 ? "-" : " "} ${line}`)
+        .join("\n");
+      results.push(justifiedPortion);
+    };
+
+    const handleQuoteParagraph = (portion) => {
+      const content = portion
+        .split("\n")
+        .map((line) => line.replace(quoteDetectionRegExp, ""));
+      const lines = indentedJustifier.justifyLines(content);
+      const justifiedPortion = lines
+        .map((line, index) => `> ${line}`)
         .join("\n");
       results.push(justifiedPortion);
     };
 
     for (const portion of portions) {
       if (portion.startsWith("> ")) {
-        handleDecorativeContent(">", portion);
+        handleQuoteParagraph(portion);
       } else if (portion.startsWith("- ")) {
-        handleDecorativeContent("-", portion);
+        handleListParagraph(portion);
       } else if (lineSeparatorRegExp.test(portion.trim())) {
         results.push("-".repeat(normalLineJustification));
       } else {
