@@ -283,7 +283,7 @@ window.onload = () => {
   const newLineRegExp = /\n/g;
   const lineSeparatorRegExp = /^\-{3}\-*$/;
   const quoteDetectionRegExp = /^\s*\>/;
-  const numericListRegExp = /(^(\d+|[IVXLCDM]+|[ivxlcdm]+)\.\s)/;
+  const numericListRegExp = /(^(\d+|[IVXLCDM]+|[ivxlcdm]+)(?:\.|\))\s)/;
   const editorElement = document.getElementById("editor");
   const justifyButton = document.getElementById("justify-button");
   const normalLineJustification = 60;
