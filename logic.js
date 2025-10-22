@@ -283,7 +283,8 @@ window.onload = () => {
   const newLineRegExp = /\n/g;
   const lineSeparatorRegExp = /^\-{3}\-*$/;
   const quoteDetectionRegExp = /^\s*\>/;
-  const numericListRegExp = /(^(\d+|[IVXLCDM]+|[ivxlcdm]+)(?:\.|\))\s)/;
+  const numericListRegExp =
+    /(^(\d+|M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))(?:\.|\))\s)/i;
   const editorElement = document.getElementById("editor");
   const justifyButton = document.getElementById("justify-button");
   const normalLineJustification = 60;
@@ -325,9 +326,7 @@ window.onload = () => {
         .split("\n")
         .map((line) => line.replace(quoteDetectionRegExp, ""));
       const lines = indentedJustifier.justifyLines(content);
-      const justifiedPortion = lines
-        .map((line, index) => `> ${line}`)
-        .join("\n");
+      const justifiedPortion = lines.map((line) => `> ${line}`).join("\n");
       results.push(justifiedPortion);
     };
 
