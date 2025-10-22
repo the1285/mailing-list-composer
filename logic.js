@@ -283,6 +283,7 @@ window.onload = () => {
   const newLineRegExp = /\n/g;
   const lineSeparatorRegExp = /^\-{3}\-*$/;
   const quoteDetectionRegExp = /^\s*\>/;
+  const numericListRegExp = /(^(\d+|[IVXLCDM]+|[ivxlcdm]+)\.\s)/;
   const editorElement = document.getElementById("editor");
   const justifyButton = document.getElementById("justify-button");
   const normalLineJustification = 60;
@@ -330,15 +331,42 @@ window.onload = () => {
       results.push(justifiedPortion);
     };
 
+    const handleNumericListParagraph = (portion) => {
+      let listMark = "";
+      const noNumericPortion = portion.replace(numericListRegExp, (match) => {
+        listMark = match;
+        return "";
+      });
+
+      const justifier = new MonoJustifier({
+        maxLineSize: normalLineJustification - listMark.length,
+      });
+
+      const content = noNumericPortion.split("\n");
+      const lines = justifier.justifyLines(content);
+      const spacesInTheSizeOfTheMark = " ".repeat(listMark.length);
+
+      const justifiedPortion = lines
+        .map(
+          (line, index) =>
+            (index === 0 ? listMark : spacesInTheSizeOfTheMark) + line
+        )
+        .join("\n");
+      results.push(justifiedPortion);
+    };
+
     for (const portion of portions) {
-      if (portion.startsWith("> ")) {
-        handleQuoteParagraph(portion);
-      } else if (portion.startsWith("- ")) {
-        handleListParagraph(portion);
-      } else if (lineSeparatorRegExp.test(portion.trim())) {
+      const trimmedPortion = portion.trim();
+      if (trimmedPortion.startsWith("> ")) {
+        handleQuoteParagraph(trimmedPortion);
+      } else if (trimmedPortion.startsWith("- ")) {
+        handleListParagraph(trimmedPortion);
+      } else if (numericListRegExp.test(trimmedPortion)) {
+        handleNumericListParagraph(trimmedPortion);
+      } else if (lineSeparatorRegExp.test(trimmedPortion)) {
         results.push("-".repeat(normalLineJustification));
       } else {
-        results.push(normalJustifier.justifyText(portion));
+        results.push(normalJustifier.justifyText(trimmedPortion));
       }
     }
 
